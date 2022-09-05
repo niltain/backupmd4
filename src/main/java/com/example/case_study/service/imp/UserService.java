@@ -26,4 +26,14 @@ public class UserService implements IUserService {
     public void delete(Long id) {
         iUserRepository.deleteById(id);
     }
+
+    @Override
+    public Users checkUserExist(Users users) {
+        for (Users u : findAll()) {
+            if (u.getUserName().equals(users.getUserName()) && u.getPass().equals(users.getPass())) {
+                return u;
+            }
+        }
+        return null;
+    }
 }

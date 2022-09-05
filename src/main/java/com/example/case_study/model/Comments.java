@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
@@ -17,7 +18,8 @@ public class Comments {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String content;
-    private int deleteComment = 1;
+    private Long likeCount = 0L;
+    private Boolean deleteComment = true;
     @ManyToOne
     private Posts posts;
     @ManyToOne

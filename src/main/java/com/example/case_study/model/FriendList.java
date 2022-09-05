@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
@@ -16,8 +17,8 @@ public class FriendList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String statusRequestTo = "Kết bạn";
-    private String statusRequestFrom = "Kết bạn";
+    private String statusRequestTo = "Add Friend";
+    private String statusRequestFrom = "Add Friend";
     @ManyToOne
     private Users usersTo;
     @ManyToOne
