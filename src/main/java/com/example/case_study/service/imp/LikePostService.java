@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+
 @Service
 public class LikePostService implements ILikePostService {
     @Autowired
@@ -25,5 +27,10 @@ public class LikePostService implements ILikePostService {
     @Override
     public void delete(Long id) {
         iLikePostRepository.deleteById(id);
+    }
+
+    @Override
+    public Optional<LikePost> findById(Long id) {
+        return iLikePostRepository.findById(id);
     }
 }

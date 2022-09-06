@@ -15,10 +15,10 @@ import java.util.List;
 public class LogInController {
     @Autowired
     IUserService iUserService;
-    @GetMapping("/getUser")
-    public ResponseEntity<List<Users>> findAllUser() {
-        return new ResponseEntity<>(iUserService.findAll(), HttpStatus.OK);
-    }
+//    @GetMapping("/getUser")
+//    public ResponseEntity<List<Users>> findAllUser() {
+//        return new ResponseEntity<>(iUserService.findAll(), HttpStatus.OK);
+//    }
 
     @PostMapping("/logIn")
     public ResponseEntity<Users> logIn(@RequestBody Users users) {

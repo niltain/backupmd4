@@ -1,4 +1,3 @@
-let userList = [];
 
 function signIn() {
     let userName = $("#usrName").val();
@@ -17,32 +16,11 @@ function signIn() {
         data: JSON.stringify(users),
         success: function (data) {
             if (data !== null) {
-                localStorage.setItem("userPresent", data);
-                console.log("newFeed");
+                console.log(data)
+                sessionStorage.setItem("userPresentId", data.id);
                 window.location = "http://localhost:63342/CASE_STUDY/CASE_STUDY.main/templates/NewFeed.html"
             }
         },
     })
+    event.preventDefault();
 }
-
-// function getUser() {
-//     $.ajax({
-//         url: "http://localhost:8080/logIn/getUser",
-//         type: "GET",
-//         success: function (data) {
-//             for (let i = 0; i < data.length; i++) {
-//                 userList.push(data[i]);
-//             }
-//         }
-//     })
-// }
-//
-// function checkUserExist(userName, pass) {
-//     getUser();
-//     for (let i = 0; i < userList.length; i++) {
-//         if (userList[i].userName === userName && userList[i].pass === pass) {
-//             return userList[i];
-//         }
-//     }
-//     return false;
-// }
