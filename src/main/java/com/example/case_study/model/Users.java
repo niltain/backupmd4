@@ -11,6 +11,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
@@ -37,6 +38,7 @@ public class Users {
     private String address;
     private String avatar;
     private String hobby;
+    private LocalDateTime createDate = LocalDateTime.now();
     private Boolean blockStatus = true;
 //    @ManyToMany(targetEntity = Roles.class,fetch = FetchType.EAGER)
 //    private Set<Roles> roles;
