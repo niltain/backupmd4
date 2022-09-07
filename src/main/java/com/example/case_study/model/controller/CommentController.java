@@ -1,4 +1,4 @@
-package com.example.case_study.controller;
+package com.example.case_study.model.controller;
 
 import com.example.case_study.model.Comments;
 import com.example.case_study.model.LikePost;
