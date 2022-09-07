@@ -63,7 +63,7 @@ function display() {
                                 post += `<button onclick="likePost(${listPost[i].id})">Like</button>`;
                             }
                             // Comment
-                            post += `<div><textarea id="commentPost" placeholder="Say Something About This Post..."></textarea>`
+                            post += `<div><textarea id="commentPost${listPost[i].id}" placeholder="Say Something About This Post..."></textarea>`
                             post += `<button onclick="comment(${listPost[i].id})">Comment</button></div>`
                             for (let l = 0; l < commentAll.length; l++) {
                                 if (commentAll[l].posts.id == listPost[i].id) {
@@ -72,7 +72,7 @@ function display() {
                                     post += `<p style="margin: 5px 20px -5px">${commentAll[l].content}</p><br>`;
                                     post += `<span>${commentAll[l].likeCount}</span>`
                                     post += `<button onclick="replyForm()">Reply</button>`
-                                    if (commentAll[l].users.id == userId) {
+                                    if ((commentAll[l].users.id == userId) || (listPost[i].users.id == userId)) {
                                         post += `<button onclick="deleteComment(${commentAll[l].id})">Delete</button></div>`;
                                     }
                                 }
@@ -91,10 +91,9 @@ function display() {
         }
     })
 }
-
+let permission = "Public";
 function createPost() {
     let content = $("#contentPost").val();
-    let permissionPost = $("#permissionPost").val();
     const ref = firebase.storage().ref();
     const file = document.querySelector('#imagePost').files[0];
     document.getElementById("contentPost").innerHTML = "";
@@ -110,7 +109,7 @@ function createPost() {
             let posts = {
                 content: content,
                 imageName: URl,
-                permissionPost: permissionPost,
+                permissionPost: permission,
                 users: {
                     id: userId
                 }
@@ -186,10 +185,8 @@ function updatePostForm(id) {
         }
     })
 }
-
 function updatePost(idPost) {
     let content = $("#contentPost").val();
-    let permissionPost = $("#permissionPost").val();
     const ref = firebase.storage().ref();
     const file = document.querySelector('#imagePost').files[0];
     document.getElementById("post").setAttribute("onclick", "createPost()");
@@ -208,7 +205,7 @@ function updatePost(idPost) {
                 id: idPost,
                 content: content,
                 imageName: URl,
-                permissionPost: permissionPost,
+                permissionPost: permission,
                 users: {
                     id: userId
                 }
@@ -230,7 +227,8 @@ function updatePost(idPost) {
 }
 
 function comment(idPost) {
-    let content = $("#commentPost").val();
+    let idComment = "commentPost" + idPost;
+    let content = document.getElementById(idComment).value;
     let comment = {
         content: content,
         posts: {
@@ -240,7 +238,6 @@ function comment(idPost) {
             id: userId
         }
     };
-    document.getElementById("commentPost").innerHTML = "";
     $.ajax({
         headers: {
             'Accept': 'application/json',
@@ -263,4 +260,16 @@ function deleteComment(id) {
             display();
         }
     })
+}
+
+function permissionOff() {
+    permission = "Private";
+    document.getElementById("permissionPost").setAttribute("onclick", "permissionOn()");
+    document.getElementById("permissionPost").innerHTML = `<i class="fa fa-lock" aria-hidden="true"></i>`;
+}
+
+function permissionOn() {
+    permission = "Public";
+    document.getElementById("permissionPost").setAttribute("onclick", "permissionOff()");
+    document.getElementById("permissionPost").innerHTML = `<i class=\"fa fa-unlock\" aria-hidden=\"true\"></i>`;
 }

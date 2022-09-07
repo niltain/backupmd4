@@ -8,21 +8,21 @@
     <script src="https://www.gstatic.com/firebasejs/8.5.0/firebase-storage.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="../ajax/fireBase.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" integrity="sha512-5A8nwdMOWrSz20fDsjczgUidUBR8liPYU+WymTZP1lmY9G6Oc7HlZv156XqnsgNUzTyMefFTcsFH/tnJE/+xBg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body onload="init()">
 <div id="postCreate">
-<div id="userName"></div>
+    <div id="userName" style="margin: 0"></div>
     <form id="formCreatePost">
-    <select name="permissionPost" id="permissionPost">
-        <option value="Public">Public</option>
-        <option value="Private">Private</option>
-    </select>
-    <br>
-    <textarea id="contentPost" placeholder="Say Something..." ></textarea>
-    <br>
-    <input type="file" id="imagePost">
-    <br>
-    <button id="post" onclick="createPost()">Post</button>
+        <div id="permissionPost" onclick="permissionOff()">
+            <i class="fa fa-lock" aria-hidden="true"></i>
+        </div>
+        <br>
+        <textarea id="contentPost" placeholder="Say Something..."></textarea>
+        <br>
+        <input type="file" id="imagePost">
+        <br>
+        <button id="post" onclick="createPost()">Post</button>
     </form>
 </div>
 <div id="postDiv"></div>
