@@ -5,13 +5,18 @@ function init() {
         url: "http://localhost:8080/user/findById/" + userId,
         type: "GET",
         success: function (user) {
-            document.getElementById("userName").innerHTML = user.userName;
+            let account = "";
+            account += `<img style="width: 30px; height: 30px; border-radius: 50%" src="${user.avatar}">`;
+            account += `<span><b>   ${user.fullName}</b></span>`;
+            document.getElementById("userName").innerHTML = account;
             display();
         }
     })
 }
+
 function display() {
     let likePostAll = [];
+    let commentAll = [];
     $.ajax({
         url: "http://localhost:8080/likePost/findAll",
         type: "GET",
@@ -19,6 +24,16 @@ function display() {
             likePostAll = new Array();
             for (let k = 0; k < likePostList.length; k++) {
                 likePostAll.push(likePostList[k]);
+            }
+        }
+    })
+    $.ajax({
+        url: "http://localhost:8080/comment/findAll",
+        type: "GET",
+        success: function (commentList) {
+            commentAll = new Array();
+            for (let k = 0; k < commentList.length; k++) {
+                commentAll.push(commentList[k]);
             }
             $.ajax({
                 url: "http://localhost:8080/post/findAll",
@@ -47,10 +62,25 @@ function display() {
                             if (check) {
                                 post += `<button onclick="likePost(${listPost[i].id})">Like</button>`;
                             }
-                            post += `<button>Comment</button>`
+                            // Comment
+                            post += `<div><textarea id="commentPost" placeholder="Say Something About This Post..."></textarea>`
+                            post += `<button onclick="comment(${listPost[i].id})">Comment</button></div>`
+                            for (let l = 0; l < commentAll.length; l++) {
+                                if (commentAll[l].posts.id == listPost[i].id) {
+                                    post += `<div id="parentCmt"><img style="width: 10px; height: 10px; border-radius: 50%" src="${commentAll[l].users.avatar}">`;
+                                    post += `<span><b>   ${commentAll[l].users.fullName}</b></span>`
+                                    post += `<p style="margin: 5px 20px -5px">${commentAll[l].content}</p><br>`;
+                                    post += `<span>${commentAll[l].likeCount}</span>`
+                                    post += `<button onclick="replyForm()">Reply</button>`
+                                    if (commentAll[l].users.id == userId) {
+                                        post += `<button onclick="deleteComment(${commentAll[l].id})">Delete</button></div>`;
+                                    }
+                                }
+                            }
                             // Neu la bai viet cua minh thi co them delete
                             if (listPost[i].users.id == userId) {
-                                post += `<button onclick="deletePost(${listPost[i].id})">Delete Status</button>`
+                                post += `<button onclick="deletePost(${listPost[i].id})">Delete Post</button>`
+                                post += `<button onclick="updatePostForm(${listPost[i].id})">Update Post</button>`
                             }
                             post += "</div>";
                         }
@@ -67,6 +97,8 @@ function createPost() {
     let permissionPost = $("#permissionPost").val();
     const ref = firebase.storage().ref();
     const file = document.querySelector('#imagePost').files[0];
+    document.getElementById("contentPost").innerHTML = "";
+    document.getElementById("formCreatePost").reset();
     const metadata = {
         contentType: file.type
     }
@@ -96,6 +128,7 @@ function createPost() {
                 }
             });
         });
+    event.preventDefault();
 }
 
 function likePost(postId) {
@@ -123,10 +156,111 @@ function likePost(postId) {
 
 function disLikePost(id) {
     $.ajax({
-        url: "http://localhost:8080/likePost/delete/" + id,
+        url: "http://localhost:8080/likePost/disLike/" + id,
         type: "DELETE",
         success: function () {
             display();
         }
-        })
+    })
+}
+
+function deletePost(id) {
+    $.ajax({
+        url: "http://localhost:8080/post/delete/" + id,
+        type: "PUT",
+        success: function () {
+            display();
+        }
+    })
+}
+
+function updatePostForm(id) {
+    $.ajax({
+        url: "http://localhost:8080/post/findById/" + id,
+        type: "GET",
+        success: function (post) {
+            document.getElementById("contentPost").innerHTML = post.content;
+            document.getElementById("post").setAttribute("onclick", "updatePost(" + id + ")");
+            document.getElementById("post").innerText = "Update";
+            document.getElementById("permissionPost").value = post.permissionPost;
+        }
+    })
+}
+
+function updatePost(idPost) {
+    let content = $("#contentPost").val();
+    let permissionPost = $("#permissionPost").val();
+    const ref = firebase.storage().ref();
+    const file = document.querySelector('#imagePost').files[0];
+    document.getElementById("post").setAttribute("onclick", "createPost()");
+    document.getElementById("post").innerText = "Post";
+    document.getElementById("contentPost").innerHTML = "";
+    document.getElementById("formCreatePost").reset();
+    const metadata = {
+        contentType: file.type
+    }
+    let image = file.name;
+    const uploadIMG = ref.child(image).put(file, metadata);
+    uploadIMG.then(snapshot => snapshot.ref.getDownloadURL())
+        .then(url => {
+            let URl = url;
+            let posts = {
+                id: idPost,
+                content: content,
+                imageName: URl,
+                permissionPost: permissionPost,
+                users: {
+                    id: userId
+                }
+            }
+            $.ajax({
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                type: "PUT",
+                data: JSON.stringify(posts),
+                url: "http://localhost:8080/post/update",
+                success: function () {
+                    display();
+                }
+            });
+        });
+    event.preventDefault();
+}
+
+function comment(idPost) {
+    let content = $("#commentPost").val();
+    let comment = {
+        content: content,
+        posts: {
+            id: idPost
+        },
+        users: {
+            id: userId
+        }
+    };
+    document.getElementById("commentPost").innerHTML = "";
+    $.ajax({
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        type: "POST",
+        data: JSON.stringify(comment),
+        url: "http://localhost:8080/comment/create",
+        success: function () {
+            display();
+        }
+    });
+}
+
+function deleteComment(id) {
+    $.ajax({
+        url: "http://localhost:8080/comment/delete/" + id,
+        type: "PUT",
+        success: function () {
+            display();
+        }
+    })
 }

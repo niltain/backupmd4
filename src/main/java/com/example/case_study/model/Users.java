@@ -26,20 +26,20 @@ public class Users {
     private Long id;
     @Column(nullable = false, unique = true)
     private String userName;
-    @NotEmpty
-    @Pattern(regexp = "^(?=.*?[A-Z])[A-Za-z0-9]{6,32}$",message = "Password invalid!")
+//    @NotEmpty
+//    @Pattern(regexp = "^(?=.*?[A-Z])[A-Za-z0-9]{6,32}$",message = "Password invalid!")
     private String pass;
     private String fullName;
-    @Pattern(regexp = "^[0-9]{10}$",message = "Phone number invalid!")
+//    @Pattern(regexp = "^[0-9]{10}$",message = "Phone number invalid!")
     private String phone;
-    @Pattern(regexp = "^[\\w-]+@([\\w-]+\\.)+[\\w-]{2,4}$",message = "Email invalid!")
+//    @Pattern(regexp = "^[\\w-]+@([\\w-]+\\.)+[\\w-]{2,4}$",message = "Email invalid!")
     private String email;
     private LocalDate dateOfBirth;
     private String address;
     private String avatar;
     private String hobby;
     private LocalDateTime createDate = LocalDateTime.now();
-    private Boolean blockStatus = true;
+    private Boolean blockUser = true;
 //    @ManyToMany(targetEntity = Roles.class,fetch = FetchType.EAGER)
 //    private Set<Roles> roles;
 }

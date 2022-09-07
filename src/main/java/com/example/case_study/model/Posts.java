@@ -1,10 +1,12 @@
 package com.example.case_study.model;
 
 import lombok.*;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -22,4 +24,5 @@ public class Posts {
     private Boolean deletePost = true;
     @ManyToOne
     private Users users;
+
 }

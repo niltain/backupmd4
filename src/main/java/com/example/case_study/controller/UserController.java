@@ -1,5 +1,6 @@
 package com.example.case_study.controller;
 
+import com.example.case_study.model.Posts;
 import com.example.case_study.model.Users;
 import com.example.case_study.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,5 +30,13 @@ public class UserController {
             return new ResponseEntity<>(users.get(), HttpStatus.OK);
         }
         return null;
+    }
+    @PutMapping("/block/{id}")
+    public void blockUser(@PathVariable Long id) {
+        Optional<Users> users = iUserService.findById(id);
+        if (users.isPresent()) {
+            users.get().setBlockUser(false);
+            iUserService.save(users.get());
+        }
     }
 }

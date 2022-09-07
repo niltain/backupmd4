@@ -38,5 +38,26 @@ public class PostController {
         }
         return null;
     }
+
+    @PutMapping("/delete/{id}")
+    public void delete(@PathVariable Long id) {
+        Optional<Posts> posts = iPostService.findById(id);
+        if (posts.isPresent()) {
+            posts.get().setDeletePost(false);
+            iPostService.save(posts.get());
+        }
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<Posts> update(@RequestBody Posts posts) {
+        Optional<Posts> posts1 = iPostService.findById(posts.getId());
+        if (posts1.isPresent()) {
+            posts1.get().setPermissionPost(posts.getPermissionPost());
+            posts1.get().setContent(posts.getContent());
+            posts1.get().setImageName(posts.getImageName());
+            return new ResponseEntity<>(iPostService.save(posts1.get()), HttpStatus.CREATED);
+        }
+        return null;
+    }
 }
 

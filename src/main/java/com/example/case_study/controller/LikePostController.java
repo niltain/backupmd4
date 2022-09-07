@@ -39,7 +39,7 @@ public class LikePostController {
         }
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/disLike/{id}")
     public void disLikePost(@PathVariable Long id) {
         Optional<LikePost> likePost = iLikePostService.findById(id);
         if (likePost.isPresent()) {

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CommentService implements ICommentService {
@@ -15,7 +16,7 @@ public class CommentService implements ICommentService {
 
     @Override
     public List<Comments> findAll() {
-        return iCommentRepository.findAll();
+        return iCommentRepository.findAllCustom();
     }
 
     @Override
@@ -26,5 +27,10 @@ public class CommentService implements ICommentService {
     @Override
     public void delete(Long id) {
         iCommentRepository.deleteById(id);
+    }
+
+    @Override
+    public Optional<Comments> findById(Long id) {
+        return iCommentRepository.findById(id);
     }
 }

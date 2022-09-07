@@ -16,7 +16,7 @@ public class PostService implements IPostService {
 
     @Override
     public List<Posts> findAll() {
-        return iPostRepository.findAll();
+        return iPostRepository.findAllCustom();
     }
 
     @Override
