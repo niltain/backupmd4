@@ -1,4 +1,4 @@
-package com.example.case_study.model.controller;
+package com.example.case_study.controller;
 
 import com.example.case_study.model.Users;
 import com.example.case_study.service.IUserService;
@@ -15,10 +15,6 @@ import java.util.List;
 public class LogInController {
     @Autowired
     IUserService iUserService;
-//    @GetMapping("/getUser")
-//    public ResponseEntity<List<Users>> findAllUser() {
-//        return new ResponseEntity<>(iUserService.findAll(), HttpStatus.OK);
-//    }
 
     @PostMapping("/logIn")
     public ResponseEntity<Users> logIn(@RequestBody Users users) {
