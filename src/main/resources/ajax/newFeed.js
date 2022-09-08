@@ -1,6 +1,10 @@
 let userId = sessionStorage.getItem("userPresentId")
 let userPresent;
+let commentAll;
+let permission = "Public";
+let commentByPostId;
 
+// Hiển thị newfeed và tài khoản hiện tại trên khung post bài
 function init() {
     $.ajax({
         url: "http://localhost:8080/user/findById/" + userId,
@@ -16,11 +20,10 @@ function init() {
     })
 }
 
-let commentAll;
-
 function display() {
     let likePostAll = [];
     commentAll = []
+    // Lấy ra tất cả các lượt like của all post
     $.ajax({
         url: "http://localhost:8080/likePost/findAll",
         type: "GET",
@@ -31,6 +34,7 @@ function display() {
             }
         }
     })
+    // Lấy ra toàn bộ comment của all post
     $.ajax({
         url: "http://localhost:8080/comment/findAll",
         type: "GET",
@@ -39,6 +43,7 @@ function display() {
             for (let k = 0; k < commentList.length; k++) {
                 commentAll.push(commentList[k]);
             }
+            // Lấy ra toàn bộ bài post
             $.ajax({
                 url: "http://localhost:8080/post/findAll",
                 type: "GET",
@@ -47,6 +52,7 @@ function display() {
                     for (let i = listPost.length - 1; i >= 0; i--) {
                         findCommentByPostId(listPost[i].id);
                         let check = true;
+                        // In ra bài post là public và tất cả bài post của mình kể cả private
                         if ((listPost[i].permissionPost == "Public") || (listPost[i].users.id == userId)) {
                             post += `<div class="central-meta item">
                                         <div class="user-post">
@@ -118,15 +124,14 @@ function display() {
 															<h5><a href="time-line.html" title="">${commentByPostId[l].users.fullName}</a></h5>
 															<a class="we-reply" href="#" title="Reply" onclick="replyForm()"><i class="fa fa-reply"></i></a>
 															<a class="we-reply" href="#" title="Like"><i class="ti-heart"></i></a>`
+                                // Nếu là comment của mình thì có thêm nút delete
                                 if ((commentByPostId[l].users.id == userId) || (listPost[i].users.id == userId)) {
                                     post += `<a class="we-reply" title="Delete" onclick="deleteComment(${commentByPostId[l].id})">
                                                     <i class="fa fa-trash-o" aria-hidden="true"></i></a>`;
-                                    // if (checkDelete) {
-                                    //     deleteComment(commentAll[l].id);
-                                    // }
                                 }
                                 post += `<p style="color: black">${commentByPostId[l].content}</p></div></div></li>`;
                             }
+                            // Khung thêm comment vào bài post
                             post += `<li class="post-comment">
                                             <div class="comet-avatar">
                                             <img src="${userPresent.avatar}" alt="" style="width: 45px; height: 45px">
@@ -147,233 +152,3 @@ function display() {
         }
     })
 }
-
-let permission = "Public";
-
-function createPost() {
-    let content = $("#contentPost").val();
-    const ref = firebase.storage().ref();
-    const file = document.querySelector('#imagePost').files[0];
-    document.getElementById("contentPost").innerHTML = "";
-    document.getElementById("formCreatePost").reset();
-    const metadata = {
-        contentType: file.type
-    }
-    let image = file.name;
-    const uploadIMG = ref.child(image).put(file, metadata);
-    uploadIMG.then(snapshot => snapshot.ref.getDownloadURL())
-        .then(url => {
-            let URl = url;
-            let posts = {
-                content: content,
-                imageName: URl,
-                permissionPost: permission,
-                users: {
-                    id: userId
-                }
-            }
-            $.ajax({
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                type: "POST",
-                data: JSON.stringify(posts),
-                url: "http://localhost:8080/post/create",
-                success: function () {
-                    display();
-                }
-            });
-        });
-    event.preventDefault();
-}
-
-function likePost(postId) {
-    let likePost = {
-        users: {
-            id: userId
-        },
-        post: {
-            id: postId
-        }
-    }
-    $.ajax({
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        url: "http://localhost:8080/likePost/create",
-        type: "POST",
-        data: JSON.stringify(likePost),
-        success: function () {
-            display();
-        }
-    })
-}
-
-function disLikePost(id) {
-    $.ajax({
-        url: "http://localhost:8080/likePost/disLike/" + id,
-        type: "DELETE",
-        success: function () {
-            display();
-        }
-    })
-}
-
-function deletePost(id) {
-    $.ajax({
-        url: "http://localhost:8080/post/delete/" + id,
-        type: "PUT",
-        success: function () {
-            display();
-        }
-    })
-}
-
-function updatePostForm(id) {
-    $.ajax({
-        url: "http://localhost:8080/post/findById/" + id,
-        type: "GET",
-        success: function (post) {
-            document.getElementById("contentPost").innerHTML = post.content;
-            document.getElementById("post").setAttribute("onclick", "updatePost(" + id + ")");
-            document.getElementById("post").innerText = "Update";
-            document.getElementById("permissionPost").value = post.permissionPost;
-        }
-    })
-}
-
-function updatePost(idPost) {
-    let content = $("#contentPost").val();
-    const ref = firebase.storage().ref();
-    const file = document.querySelector('#imagePost').files[0];
-    document.getElementById("post").setAttribute("onclick", "createPost()");
-    document.getElementById("post").innerText = "Post";
-    document.getElementById("contentPost").innerHTML = "";
-    document.getElementById("formCreatePost").reset();
-    const metadata = {
-        contentType: file.type
-    }
-    let image = file.name;
-    const uploadIMG = ref.child(image).put(file, metadata);
-    uploadIMG.then(snapshot => snapshot.ref.getDownloadURL())
-        .then(url => {
-            let URl = url;
-            let posts = {
-                id: idPost,
-                content: content,
-                imageName: URl,
-                permissionPost: permission,
-                users: {
-                    id: userId
-                }
-            }
-            $.ajax({
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                type: "PUT",
-                data: JSON.stringify(posts),
-                url: "http://localhost:8080/post/update",
-                success: function () {
-                    display();
-                }
-            });
-        });
-    event.preventDefault();
-}
-
-function comment(idPost) {
-    let idComment = "commentPost" + idPost;
-    let content = document.getElementById(idComment).value;
-    let comment = {
-        content: content,
-        posts: {
-            id: idPost
-        },
-        users: {
-            id: userId
-        }
-    };
-    $.ajax({
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        type: "POST",
-        data: JSON.stringify(comment),
-        url: "http://localhost:8080/comment/create",
-        success: function () {
-            display();
-        }
-    });
-    event.preventDefault();
-}
-
-function deleteComment(id) {
-    $.ajax({
-        url: "http://localhost:8080/comment/delete/" + id,
-        type: "PUT",
-        success: function () {
-            display();
-        }
-    })
-}
-
-let commentByPostId;
-
-function findCommentByPostId(idPost) {
-    commentByPostId = [];
-    for (let i = 0; i < commentAll.length; i++) {
-        if (commentAll[i].posts.id == idPost) {
-            commentByPostId.push(commentAll[i]);
-        }
-    }
-}
-
-function permissionOff() {
-    permission = "Private";
-    document.getElementById("permissionPost").setAttribute("onclick", "permissionOn()");
-    document.getElementById("permissionPost").innerHTML = `<i class="fa fa-lock" aria-hidden="true"></i>`;
-}
-
-function permissionOn() {
-    permission = "Public";
-    document.getElementById("permissionPost").setAttribute("onclick", "permissionOff()");
-    document.getElementById("permissionPost").innerHTML = `<i class="fa fa-globe" aria-hidden="true"></i>`;
-}
-
-// function modalDeleteDisplay() {
-//     let modal = "";
-//     modal += `<form class="modal-content">
-//         <div class="container">
-//             <h1>Delete</h1>
-//             <p>Are you sure you want to delete?</p>
-//
-//             <div class="clearfix">
-//                 <button type="button" onclick="confirmCancel()"
-//                         class="cancelbtn">Cancel
-//                 </button>
-//                 <button type="button" onclick="confirmDelete()"
-//                         class="deletebtn">Delete
-//                 </button>
-//             </div>
-//         </div>
-//     </form>`;
-//     document.getElementById("modalDelete").innerHTML = modal;
-//     document.getElementById("modalDelete").style.display = "block";
-// }
-
-let checkDelete;
-
-function confirmDelete() {
-    let result = confirm("Are you sure you want to delete?");
-    checkDelete = result;
-}
-
-// function confirmCancel() {
-//     checkDelete = false;
-//     document.getElementById("modalDelete").style.display = "none";
-// }
