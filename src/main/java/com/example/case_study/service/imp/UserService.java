@@ -40,6 +40,16 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public Users checkSignUp(Users users) {
+        for (Users u : findAll()) {
+            if (u.getUserName().equals(users.getUserName())) {
+                return null;
+            }
+        }
+        return users;
+    }
+
+    @Override
     public Optional<Users> findById(Long id) {
         return iUserRepository.findById(id);
     }

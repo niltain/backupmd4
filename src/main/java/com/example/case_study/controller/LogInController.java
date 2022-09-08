@@ -7,8 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/logIn")
@@ -16,7 +14,7 @@ public class LogInController {
     @Autowired
     IUserService iUserService;
 
-    @GetMapping("/logIn")
+    @PostMapping("/logIn")
     public ResponseEntity<Users> logIn(@RequestBody Users users) {
         Users users1 = iUserService.checkUserExist(users);
         if (users1 != null) {
@@ -27,6 +25,9 @@ public class LogInController {
 
     @PostMapping("/signUp")
     public ResponseEntity<Users> signUp(@RequestBody Users users) {
-        return new ResponseEntity<>(iUserService.save(users), HttpStatus.OK);
+        if (iUserService.checkSignUp(users) != null) {
+            return new ResponseEntity<>(iUserService.save(users), HttpStatus.OK);
+        }
+        return null;
     }
 }
