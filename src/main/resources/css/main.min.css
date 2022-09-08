@@ -5,8 +5,12 @@
  */
 @font-face {
     font-family: FontAwesome;
-    src: url(../../CASE_STUDY_MD4/src/main/resources/fonts/fontawesome-webfont3e6e.eot?v=4.7.0);
-    src: url(../../CASE_STUDY_MD4/src/main/resources/fonts/fontawesome-webfontd41d.eot?#iefix&v=4.7.0) format('embedded-opentype'), url(../../CASE_STUDY_MD4/src/main/resources/fonts/fontawesome-webfont3e6e.woff2?v=4.7.0) format('woff2'), url(../../CASE_STUDY_MD4/src/main/resources/fonts/fontawesome-webfont3e6e.woff?v=4.7.0) format('woff'), url(../../CASE_STUDY_MD4/src/main/resources/fonts/fontawesome-webfont3e6e.ttf?v=4.7.0) format('truetype'), url(../../CASE_STUDY_MD4/src/main/resources/fonts/fontawesome-webfont3e6e.svg?v=4.7.0#fontawesomeregular) format('svg');
+    src: url(/Users/cozyboy/Desktop/CASE_STUDY_MD4/src/main/resources/fonts/fontawesome-webfont3e6e.eot);
+    src: url(/Users/cozyboy/Desktop/CASE_STUDY_MD4/src/main/resources/fonts/fontawesome-webfontd41d.eot) format('embedded-opentype'),
+    url(../../resources/fonts/fontawesome-webfont3e6e.woff2?v=4.7.0) format('woff2'),
+    url(../resources/fonts/fontawesome-webfont3e6e.woff?v=4.7.0) format('woff'),
+    url(../resources/fonts/fontawesome-webfont3e6e.ttf?v=4.7.0) format('truetype'),
+    url(../resources/fonts/fontawesome-webfont3e6e.svg?v=4.7.0#fontawesomeregular) format('svg');
     font-weight: 400;
     font-style: normal
 }
@@ -2923,8 +2927,8 @@
 
 @font-face {
     font-family: themify;
-    src: url(../../CASE_STUDY_MD4/src/main/resources/fonts/themify9f24.eot?-fvbane);
-    src: url(../../CASE_STUDY_MD4/src/main/resources/fonts/themifyd41d.eot?#iefix-fvbane) format('embedded-opentype'), url(../../CASE_STUDY_MD4/src/main/resources/fonts/themify9f24.woff?-fvbane) format('woff'), url(../../CASE_STUDY_MD4/src/main/resources/fonts/themify9f24.ttf?-fvbane) format('truetype'), url(../../CASE_STUDY_MD4/src/main/resources/fonts/themify9f24.svg?-fvbane#themify) format('svg');
+    src: url(../../resources/fonts/themify9f24.eot?-fvbane);
+    src: url(../../resources/fonts/themifyd41d.eot?#iefix-fvbane) format('embedded-opentype'), url(../../resources/fonts/themify9f24.woff?-fvbane) format('woff'), url(../../resources/fonts/themify9f24.ttf?-fvbane) format('truetype'), url(../../resources/fonts/themify9f24.svg?-fvbane#themify) format('svg');
     font-weight: 400;
     font-style: normal
 }
