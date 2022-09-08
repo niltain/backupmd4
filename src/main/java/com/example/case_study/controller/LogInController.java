@@ -16,13 +16,17 @@ public class LogInController {
     @Autowired
     IUserService iUserService;
 
-    @PostMapping("/logIn")
+    @GetMapping("/logIn")
     public ResponseEntity<Users> logIn(@RequestBody Users users) {
         Users users1 = iUserService.checkUserExist(users);
         if (users1 != null) {
             return new ResponseEntity<>(users1, HttpStatus.OK);
-        } else {
-            return null;
         }
+        return null;
+    }
+
+    @PostMapping("/signUp")
+    public ResponseEntity<Users> signUp(@RequestBody Users users) {
+        return new ResponseEntity<>(iUserService.save(users), HttpStatus.OK);
     }
 }

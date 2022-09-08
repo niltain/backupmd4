@@ -26,13 +26,14 @@ public class Users {
     private Long id;
     @Column(nullable = false, unique = true)
     private String userName;
-//    @NotEmpty
+    //    @NotEmpty
 //    @Pattern(regexp = "^(?=.*?[A-Z])[A-Za-z0-9]{6,32}$",message = "Password invalid!")
+    @Column(nullable = false)
     private String pass;
     private String fullName;
-//    @Pattern(regexp = "^[0-9]{10}$",message = "Phone number invalid!")
+    //    @Pattern(regexp = "^[0-9]{10}$",message = "Phone number invalid!")
     private String phone;
-//    @Pattern(regexp = "^[\\w-]+@([\\w-]+\\.)+[\\w-]{2,4}$",message = "Email invalid!")
+    //    @Pattern(regexp = "^[\\w-]+@([\\w-]+\\.)+[\\w-]{2,4}$",message = "Email invalid!")
     private String email;
     private LocalDate dateOfBirth;
     private String address;

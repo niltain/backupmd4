@@ -73,7 +73,10 @@ function display() {
                                     post += `<span>${commentAll[l].likeCount}</span>`
                                     post += `<button onclick="replyForm()">Reply</button>`
                                     if ((commentAll[l].users.id == userId) || (listPost[i].users.id == userId)) {
-                                        post += `<button onclick="deleteComment(${commentAll[l].id})">Delete</button></div>`;
+                                        post += `<button onclick="modalDeleteDisplay()">Delete</button></div>`;
+                                        if (checkDelete) {
+                                            deleteComment(commentAll[l].id);
+                                        }
                                     }
                                 }
                             }
@@ -91,7 +94,9 @@ function display() {
         }
     })
 }
+
 let permission = "Public";
+
 function createPost() {
     let content = $("#contentPost").val();
     const ref = firebase.storage().ref();
@@ -185,6 +190,7 @@ function updatePostForm(id) {
         }
     })
 }
+
 function updatePost(idPost) {
     let content = $("#contentPost").val();
     const ref = firebase.storage().ref();
@@ -272,4 +278,35 @@ function permissionOn() {
     permission = "Public";
     document.getElementById("permissionPost").setAttribute("onclick", "permissionOff()");
     document.getElementById("permissionPost").innerHTML = `<i class=\"fa fa-unlock\" aria-hidden=\"true\"></i>`;
+}
+
+function modalDeleteDisplay() {
+    let modal = "";
+    modal += `<form class="modal-content">
+        <div class="container">
+            <h1>Delete</h1>
+            <p>Are you sure you want to delete?</p>
+
+            <div class="clearfix">
+                <button type="button" onclick="confirmCancel()"
+                        class="cancelbtn">Cancel
+                </button>
+                <button type="button" onclick="confirmDelete()"
+                        class="deletebtn">Delete
+                </button>
+            </div>
+        </div>
+    </form>`;
+    document.getElementById("modalDelete").innerHTML = modal;
+    document.getElementById("modalDelete").style.display = "block";
+}
+
+let checkDelete;
+function confirmDelete() {
+    checkDelete = true;
+    document.getElementById("modalDelete").style.display = "none";
+}
+function confirmCancel() {
+    checkDelete = false;
+    document.getElementById("modalDelete").style.display = "none";
 }
