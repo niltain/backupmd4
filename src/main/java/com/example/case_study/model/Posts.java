@@ -6,6 +6,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -21,6 +22,7 @@ public class Posts {
     private String imageName;
     private Long likeCount = 0L;
     private String permissionPost = "Public";
+    private LocalDateTime createPost = LocalDateTime.now();
     private Boolean deletePost = true;
     @ManyToOne
     private Users users;

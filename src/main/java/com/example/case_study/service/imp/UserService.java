@@ -32,11 +32,21 @@ public class UserService implements IUserService {
     @Override
     public Users checkUserExist(Users users) {
         for (Users u : findAll()) {
-            if (u.getUserName().equals(users.getUserName()) && u.getPass().equals(users.getPass())) {
+            if (u.getBlockUser() && u.getUserName().equals(users.getUserName()) && u.getPass().equals(users.getPass())) {
                 return u;
             }
         }
         return null;
+    }
+
+    @Override
+    public Users checkSignUp(Users users) {
+        for (Users u : findAll()) {
+            if (u.getUserName().equals(users.getUserName())) {
+                return null;
+            }
+        }
+        return users;
     }
 
     @Override

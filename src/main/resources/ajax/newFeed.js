@@ -1,14 +1,20 @@
 let userId = sessionStorage.getItem("userPresentId")
+let userPresent;
+let commentAll;
+let permission = "Public";
+let commentByPostId;
 
+// Hiển thị newfeed và tài khoản hiện tại trên khung post bài
 function init() {
     $.ajax({
         url: "http://localhost:8080/user/findById/" + userId,
         type: "GET",
         success: function (user) {
+            userPresent = user;
             let account = "";
-            account += `<img style="width: 30px; height: 30px; border-radius: 50%" src="${user.avatar}">`;
-            account += `<span><b>   ${user.fullName}</b></span>`;
+            account += `<img src="${user.avatar}" style="height: 70px; width: 70px">`;
             document.getElementById("userName").innerHTML = account;
+            document.getElementById("user-img").src = user.avatar;
             display();
         }
     })
@@ -16,7 +22,8 @@ function init() {
 
 function display() {
     let likePostAll = [];
-    let commentAll = [];
+    commentAll = []
+    // Lấy ra tất cả các lượt like của all post
     $.ajax({
         url: "http://localhost:8080/likePost/findAll",
         type: "GET",
@@ -27,6 +34,7 @@ function display() {
             }
         }
     })
+    // Lấy ra toàn bộ comment của all post
     $.ajax({
         url: "http://localhost:8080/comment/findAll",
         type: "GET",
@@ -35,54 +43,107 @@ function display() {
             for (let k = 0; k < commentList.length; k++) {
                 commentAll.push(commentList[k]);
             }
+            // Lấy ra toàn bộ bài post
             $.ajax({
                 url: "http://localhost:8080/post/findAll",
                 type: "GET",
                 success: function (listPost) {
                     let post = "";
                     for (let i = listPost.length - 1; i >= 0; i--) {
+                        findCommentByPostId(listPost[i].id);
                         let check = true;
+                        // In ra bài post là public và tất cả bài post của mình kể cả private
                         if ((listPost[i].permissionPost == "Public") || (listPost[i].users.id == userId)) {
-                            post += "<div style='margin-top: 20px'>";
-                            post += `<img style="width: 30px; height: 30px; border-radius: 50%" src="${listPost[i].users.avatar}">`;
-                            post += `<span><b>   ${listPost[i].users.fullName}</b></span>`
-                            if (listPost[i].permissionPost == "Private") {
-                                post += `<button>x</button>`;
-                            }
-                            post += `<p style="margin: 5px 20px -5px">${listPost[i].content}</p><br>`;
-                            post += `<img style="width: 200px; height: 200px" src="${listPost[i].imageName}">`;
-                            post += `<br><span>${listPost[i].likeCount}</span>`
+                            post += `<div class="central-meta item">
+                                        <div class="user-post">
+                                       <div class="friend-info"><figure>
+                                       <img src="${listPost[i].users.avatar}" alt="" style="width: 45px; height: 45px">
+                                       </figure>
+                                       <div class="friend-name">
+                                       <ins><a href="time-line.html" title="">${listPost[i].users.fullName}</a></ins>
+                                       <span>${listPost[i].permissionPost} : ${listPost[i].createPost}</span>
+                                       </div>`;
+                            post += `<div class="post-meta">
+												<img src="${listPost[i].imageName}" alt="">
+												<div class="we-video-info">
+													<ul>
+														<li>
+															<span class="comment" data-toggle="tooltip" title="Comments">
+																<i class="fa fa-comments-o"></i>
+																<ins>${commentByPostId.length}</ins>
+															</span>
+														</li>`;
+
                             // Hien thi dislike neu da like
                             for (let j = 0; j < likePostAll.length; j++) {
                                 if (likePostAll[j].users.id == userId && likePostAll[j].post.id == listPost[i].id) {
                                     check = false;
-                                    post += `<button onclick="disLikePost(${likePostAll[j].id})">DisLike</button>`
+                                    post += `<li>
+                                                 <span class="like" data-toggle="tooltip" title="like">
+												   <i class="fa fa-heart" aria-hidden="true" onclick="disLikePost(${likePostAll[j].id})"></i>
+												   <ins>${listPost[i].likeCount}</ins>
+											      </span>
+										    </li>`;
                                 }
                             }
                             if (check) {
-                                post += `<button onclick="likePost(${listPost[i].id})">Like</button>`;
+                                post += `<li>
+												<span class="like" data-toggle="tooltip" title="like">
+													<i class="ti-heart" onclick="likePost(${listPost[i].id})"></i>
+													<ins>${listPost[i].likeCount}</ins>
+												</span>
+										</li>`;
                             }
-                            // Comment
-                            post += `<div><textarea id="commentPost${listPost[i].id}" placeholder="Say Something About This Post..."></textarea>`
-                            post += `<button onclick="comment(${listPost[i].id})">Comment</button></div>`
-                            for (let l = 0; l < commentAll.length; l++) {
-                                if (commentAll[l].posts.id == listPost[i].id) {
-                                    post += `<div id="parentCmt"><img style="width: 10px; height: 10px; border-radius: 50%" src="${commentAll[l].users.avatar}">`;
-                                    post += `<span><b>   ${commentAll[l].users.fullName}</b></span>`
-                                    post += `<p style="margin: 5px 20px -5px">${commentAll[l].content}</p><br>`;
-                                    post += `<span>${commentAll[l].likeCount}</span>`
-                                    post += `<button onclick="replyForm()">Reply</button>`
-                                    if ((commentAll[l].users.id == userId) || (listPost[i].users.id == userId)) {
-                                        post += `<button onclick="deleteComment(${commentAll[l].id})">Delete</button></div>`;
-                                    }
-                                }
-                            }
-                            // Neu la bai viet cua minh thi co them delete
                             if (listPost[i].users.id == userId) {
-                                post += `<button onclick="deletePost(${listPost[i].id})">Delete Post</button>`
-                                post += `<button onclick="updatePostForm(${listPost[i].id})">Update Post</button>`
+                                post += `<li>
+											<span class="like" data-toggle="tooltip" title="like">
+											<i class="fa fa-trash-o" aria-hidden="true" onclick="deletePost(${listPost[i].id})"></i>
+											</span>
+										</li>`;
+                                post += `<li>
+											<span class="like" data-toggle="tooltip" title="like">
+												<i class="fa fa-pencil-square-o" aria-hidden="true" onclick="updatePostForm(${listPost[i].id})"></i>
+											</span>
+										</li>`;
                             }
-                            post += "</div>";
+                            post += `</ul></div>`;
+                            post += `<div class="description">
+                                     <p>${listPost[i].content}</p>
+                                     </div>
+                                     </div>`;
+                            // Comment
+                            post += `</div><div class="coment-area" id="commentArea">
+                                                    <ul class="we-comet" style="list-style-type: none">`
+                            for (let l = 0; l < commentByPostId.length; l++) {
+                                post += `<li>
+													<div class="comet-avatar">
+														<img src="${commentByPostId[l].users.avatar}" alt="" style="width: 45px; height: 45px">
+													</div>
+													<div class="we-comment" id="parentCmt">
+														<div class="coment-head">
+															<h5><a href="time-line.html" title="">${commentByPostId[l].users.fullName}</a></h5>
+															<a class="we-reply" href="#" title="Reply" onclick="replyForm()"><i class="fa fa-reply"></i></a>
+															<a class="we-reply" href="#" title="Like"><i class="ti-heart"></i></a>`
+                                // Nếu là comment của mình thì có thêm nút delete
+                                if ((commentByPostId[l].users.id == userId) || (listPost[i].users.id == userId)) {
+                                    post += `<a class="we-reply" title="Delete" onclick="deleteComment(${commentByPostId[l].id})">
+                                                    <i class="fa fa-trash-o" aria-hidden="true"></i></a>`;
+                                }
+                                post += `<p style="color: black">${commentByPostId[l].content}</p></div></div></li>`;
+                            }
+                            // Khung thêm comment vào bài post
+                            post += `<li class="post-comment">
+                                            <div class="comet-avatar">
+                                            <img src="${userPresent.avatar}" alt="" style="width: 45px; height: 45px">
+                                            </div>`;
+                            post += `<div class="post-comt-box">
+                                            <form method="post">
+                                            <textarea id="commentPost${listPost[i].id}" placeholder="Post your comment"></textarea>
+                                            <button type="submit" style="background: #088dcd; position: relative" onclick="comment(${listPost[i].id})">Post</button>
+                                            </form>
+                                            </div>
+                                            </li>
+                                            </ul></div></div></div>`;
                         }
                     }
                     document.getElementById("postDiv").innerHTML = post;
@@ -90,186 +151,4 @@ function display() {
             })
         }
     })
-}
-let permission = "Public";
-function createPost() {
-    let content = $("#contentPost").val();
-    const ref = firebase.storage().ref();
-    const file = document.querySelector('#imagePost').files[0];
-    document.getElementById("contentPost").innerHTML = "";
-    document.getElementById("formCreatePost").reset();
-    const metadata = {
-        contentType: file.type
-    }
-    let image = file.name;
-    const uploadIMG = ref.child(image).put(file, metadata);
-    uploadIMG.then(snapshot => snapshot.ref.getDownloadURL())
-        .then(url => {
-            let URl = url;
-            let posts = {
-                content: content,
-                imageName: URl,
-                permissionPost: permission,
-                users: {
-                    id: userId
-                }
-            }
-            $.ajax({
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                type: "POST",
-                data: JSON.stringify(posts),
-                url: "http://localhost:8080/post/create",
-                success: function () {
-                    display();
-                }
-            });
-        });
-    event.preventDefault();
-}
-
-function likePost(postId) {
-    let likePost = {
-        users: {
-            id: userId
-        },
-        post: {
-            id: postId
-        }
-    }
-    $.ajax({
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        url: "http://localhost:8080/likePost/create",
-        type: "POST",
-        data: JSON.stringify(likePost),
-        success: function () {
-            display();
-        }
-    })
-}
-
-function disLikePost(id) {
-    $.ajax({
-        url: "http://localhost:8080/likePost/disLike/" + id,
-        type: "DELETE",
-        success: function () {
-            display();
-        }
-    })
-}
-
-function deletePost(id) {
-    $.ajax({
-        url: "http://localhost:8080/post/delete/" + id,
-        type: "PUT",
-        success: function () {
-            display();
-        }
-    })
-}
-
-function updatePostForm(id) {
-    $.ajax({
-        url: "http://localhost:8080/post/findById/" + id,
-        type: "GET",
-        success: function (post) {
-            document.getElementById("contentPost").innerHTML = post.content;
-            document.getElementById("post").setAttribute("onclick", "updatePost(" + id + ")");
-            document.getElementById("post").innerText = "Update";
-            document.getElementById("permissionPost").value = post.permissionPost;
-        }
-    })
-}
-function updatePost(idPost) {
-    let content = $("#contentPost").val();
-    const ref = firebase.storage().ref();
-    const file = document.querySelector('#imagePost').files[0];
-    document.getElementById("post").setAttribute("onclick", "createPost()");
-    document.getElementById("post").innerText = "Post";
-    document.getElementById("contentPost").innerHTML = "";
-    document.getElementById("formCreatePost").reset();
-    const metadata = {
-        contentType: file.type
-    }
-    let image = file.name;
-    const uploadIMG = ref.child(image).put(file, metadata);
-    uploadIMG.then(snapshot => snapshot.ref.getDownloadURL())
-        .then(url => {
-            let URl = url;
-            let posts = {
-                id: idPost,
-                content: content,
-                imageName: URl,
-                permissionPost: permission,
-                users: {
-                    id: userId
-                }
-            }
-            $.ajax({
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                type: "PUT",
-                data: JSON.stringify(posts),
-                url: "http://localhost:8080/post/update",
-                success: function () {
-                    display();
-                }
-            });
-        });
-    event.preventDefault();
-}
-
-function comment(idPost) {
-    let idComment = "commentPost" + idPost;
-    let content = document.getElementById(idComment).value;
-    let comment = {
-        content: content,
-        posts: {
-            id: idPost
-        },
-        users: {
-            id: userId
-        }
-    };
-    $.ajax({
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        type: "POST",
-        data: JSON.stringify(comment),
-        url: "http://localhost:8080/comment/create",
-        success: function () {
-            display();
-        }
-    });
-}
-
-function deleteComment(id) {
-    $.ajax({
-        url: "http://localhost:8080/comment/delete/" + id,
-        type: "PUT",
-        success: function () {
-            display();
-        }
-    })
-}
-
-function permissionOff() {
-    permission = "Private";
-    document.getElementById("permissionPost").setAttribute("onclick", "permissionOn()");
-    document.getElementById("permissionPost").innerHTML = `<i class="fa fa-lock" aria-hidden="true"></i>`;
-}
-
-function permissionOn() {
-    permission = "Public";
-    document.getElementById("permissionPost").setAttribute("onclick", "permissionOff()");
-    document.getElementById("permissionPost").innerHTML = `<i class=\"fa fa-unlock\" aria-hidden=\"true\"></i>`;
 }

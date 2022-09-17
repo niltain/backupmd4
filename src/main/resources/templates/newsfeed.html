@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 
 
 <head>
@@ -14,9 +14,14 @@
     <link rel="stylesheet" href="../../resources/css/style.css">
     <link rel="stylesheet" href="../../resources/css/color.css">
     <link rel="stylesheet" href="../../resources/css/responsive.css">
-
+	<script src="../ajax/newFeed.js"></script>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/8.5.0/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/8.5.0/firebase-storage.js"></script>
+	<script src="../ajax/fireBase.js"></script>
+	<script src="../ajax/newFeedFunction.js"></script>
 </head>
-<body>
+<body onload="init()">
 <!--<div class="se-pre-con"></div>-->
 <div class="theme-layout">
 
@@ -329,7 +334,7 @@
 				</li>
 			</ul>
 			<div class="user-img">
-				<img src="../images/resources/admin.jpg" alt="">
+				<img id="user-img" alt="" style="width: 50px; height: 50px">
 				<span class="status f-online"></span>
 				<div class="user-setting">
 					<a href="#" title=""><span class="status f-online"></span>online</a>
@@ -420,19 +425,20 @@
 									</div><!-- who's following -->
 								</aside>
 							</div><!-- sidebar -->
+
+
+
 							<div class="col-lg-6">
-								<div class="central-meta">
+								<div class="central-meta" id="postCreate">
 									<div class="new-postbox">
-										<figure>
-											<img src="../images/resources/admin2.jpg" alt="">
-										</figure>
+										<figure id="userName"></figure>
 										<div class="newpst-input">
-											<form method="post">
-												<textarea rows="2" placeholder="write something"></textarea>
+											<form method="post" id="formCreatePost">
+												<textarea id="contentPost" rows="2" placeholder="write something"></textarea>
 												<div class="attachments">
 													<ul>
 
-														<li id = "permissionPost" onclick="permissionOn()">
+														<li id = "permissionPost" onclick="permissionOff()">
 															<i class="fa fa-globe" aria-hidden="true"></i>
 														</li>
 														<li>
@@ -444,11 +450,11 @@
 														<li>
 															<i class="fa fa-camera"></i>
 															<label class="fileContainer">
-																<input type="file">
+																<input type="file" id="imagePost">
 															</label>
 														</li>
 														<li>
-															<button type="submit">Post</button>
+															<button id="post" type="submit" onclick="createPost()">Post</button>
 														</li>
 													</ul>
 												</div>
@@ -456,246 +462,11 @@
 										</div>
 									</div>
 								</div><!-- add post new box -->
-								<div class="loadMore">
-								<div class="central-meta item">
-									<div class="user-post">
-										<div class="friend-info">
-											<figure>
-												<img src="../images/resources/friend-avatar10.jpg" alt="">
-											</figure>
-											<div class="friend-name">
-												<ins><a href="time-line.html" title="">Janice Griffith</a></ins>
-												<span>published: june,2 2018 19:PM</span>
-											</div>
-											<div class="post-meta">
-												<img src="../images/resources/user-post.jpg" alt="">
-												<div class="we-video-info">
-													<ul>
+								<div class="loadMore" id="postDiv">
 
-														<li>
-															<span class="comment" data-toggle="tooltip" title="Comments">
-																<i class="fa fa-comments-o"></i>
-																<ins>52</ins>
-															</span>
-														</li>
-														<li>
-															<span class="like" data-toggle="tooltip" title="like">
-																<i class="ti-heart"></i>
-																<ins>2.2k</ins>
-															</span>
-														</li>
-														<li class="social-media">
-															<div class="menu">
-															  <div class="btn trigger"><i class="fa fa-lock" aria-hidden="true"></i></div>
-															</div>
-														</li>
-													</ul>
-												</div>
-												<div class="description">
-													
-													<p>
-														World's most beautiful car in Curabitur <a href="#" title="">#test drive booking !</a> the most beatuiful car available in america and the saudia arabia, you can book your test drive by our official website
-													</p>
-												</div>
-											</div>
-										</div>
-										<div class="coment-area">
-											<ul class="we-comet">
-												<li>
-													<div class="comet-avatar">
-														<img src="../images/resources/comet-1.jpg" alt="">
-													</div>
-													<div class="we-comment">
-														<div class="coment-head">
-															<h5><a href="time-line.html" title="">Jason borne</a></h5>
-															<span>1 year ago</span>
-															<a class="we-reply" href="#" title="Reply"><i class="fa fa-reply"></i></a>
-															<a class="we-reply" href="#" title="Reply"><i class="ti-heart"></i></a>
-														</div>
-														<p>we are working for the dance and sing songs. this car is very awesome for the youngster. please vote this car and like our post</p>
-													</div>
-													<ul>
-														<li>
-															<div class="comet-avatar">
-																<img src="../images/resources/comet-2.jpg" alt="">
-															</div>
-															<div class="we-comment">
-																<div class="coment-head">
-																	<h5><a href="time-line.html" title="">alexendra dadrio</a></h5>
-																	<span>1 month ago</span>
-																	<a class="we-reply" href="#" title="Reply"><i class="fa fa-reply"></i></a>
-																</div>
-																<p>yes, really very awesome car i see the features of this car in the official website of <a href="#" title="">#Mercedes-Benz</a> and really impressed :-)</p>
-															</div>
-														</li>
-														<li>
-															<div class="comet-avatar">
-																<img src="../images/resources/comet-3.jpg" alt="">
-															</div>
-															<div class="we-comment">
-																<div class="coment-head">
-																	<h5><a href="time-line.html" title="">Olivia</a></h5>
-																	<span>16 days ago</span>
-																	<a class="we-reply" href="#" title="Reply"><i class="fa fa-reply"></i></a>
-																</div>
-																<p>i like lexus cars, lexus cars are most beautiful with the awesome features, but this car is really outstanding than lexus</p>
-															</div>
-														</li>
-													</ul>
-												</li>
-												<li>
-													<div class="comet-avatar">
-														<img src="../images/resources/comet-1.jpg" alt="">
-													</div>
-													<div class="we-comment">
-														<div class="coment-head">
-															<h5><a href="time-line.html" title="">Donald Trump</a></h5>
-															<span>1 week ago</span>
-															<a class="we-reply" href="#" title="Reply"><i class="fa fa-reply"></i></a>
-														</div>
-														<p>we are working for the dance and sing songs. this video is very awesome for the youngster. please vote this video and like our channel
-															<i class="em em-smiley"></i>
-														</p>
-													</div>
-												</li>
-												<li>
-													<a href="#" title="" class="showmore underline">more comments</a>
-												</li>
-												<li class="post-comment">
-													<div class="comet-avatar">
-														<img src="../images/resources/comet-1.jpg" alt="">
-													</div>
-													<div class="post-comt-box">
-														<form method="post">
-															<textarea placeholder="Post your comment"></textarea>
-																<button type="submit" style="background: #088dcd; position: relative">Post</button>
-														</form>	
-													</div>
-												</li>
-											</ul>
-										</div>
-									</div>
 
-								</div><div class="central-meta item">
-									<div class="user-post">
-										<div class="friend-info">
-											<figure>
-												<img src="../images/resources/friend-avatar10.jpg" alt="">
-											</figure>
-											<div class="friend-name">
-												<ins><a href="time-line.html" title="">Janice Griffith</a></ins>
-												<span>published: june,2 2018 19:PM</span>
-											</div>
-											<div class="post-meta">
-												<img src="../images/resources/user-post.jpg" alt="">
-												<div class="we-video-info">
-													<ul>
 
-														<li>
-															<span class="comment" data-toggle="tooltip" title="Comments">
-																<i class="fa fa-comments-o"></i>
-																<ins>52</ins>
-															</span>
-														</li>
-														<li>
-															<span class="like" data-toggle="tooltip" title="like">
-																<i class="ti-heart"></i>
-																<ins>2.2k</ins>
-															</span>
-														</li>
-														<li class="social-media">
-															<div class="menu">
-															  <div class="btn trigger"><i class="fa fa-lock" aria-hidden="true"></i></div>
-															</div>
-														</li>
-													</ul>
-												</div>
-												<div class="description">
 
-													<p>
-														World's most beautiful car in Curabitur <a href="#" title="">#test drive booking !</a> the most beatuiful car available in america and the saudia arabia, you can book your test drive by our official website
-													</p>
-												</div>
-											</div>
-										</div>
-										<div class="coment-area">
-											<ul class="we-comet">
-												<li>
-													<div class="comet-avatar">
-														<img src="../images/resources/comet-1.jpg" alt="">
-													</div>
-													<div class="we-comment">
-														<div class="coment-head">
-															<h5><a href="time-line.html" title="">Jason borne</a></h5>
-															<span>1 year ago</span>
-															<a class="we-reply" href="#" title="Reply"><i class="fa fa-reply"></i></a>
-															<a class="we-reply" href="#" title="Reply"><i class="ti-heart"></i></a>
-														</div>
-														<p>we are working for the dance and sing songs. this car is very awesome for the youngster. please vote this car and like our post</p>
-													</div>
-													<ul>
-														<li>
-															<div class="comet-avatar">
-																<img src="../images/resources/comet-2.jpg" alt="">
-															</div>
-															<div class="we-comment">
-																<div class="coment-head">
-																	<h5><a href="time-line.html" title="">alexendra dadrio</a></h5>
-																	<span>1 month ago</span>
-																	<a class="we-reply" href="#" title="Reply"><i class="fa fa-reply"></i></a>
-																</div>
-																<p>yes, really very awesome car i see the features of this car in the official website of <a href="#" title="">#Mercedes-Benz</a> and really impressed :-)</p>
-															</div>
-														</li>
-														<li>
-															<div class="comet-avatar">
-																<img src="../images/resources/comet-3.jpg" alt="">
-															</div>
-															<div class="we-comment">
-																<div class="coment-head">
-																	<h5><a href="time-line.html" title="">Olivia</a></h5>
-																	<span>16 days ago</span>
-																	<a class="we-reply" href="#" title="Reply"><i class="fa fa-reply"></i></a>
-																</div>
-																<p>i like lexus cars, lexus cars are most beautiful with the awesome features, but this car is really outstanding than lexus</p>
-															</div>
-														</li>
-													</ul>
-												</li>
-												<li>
-													<div class="comet-avatar">
-														<img src="../images/resources/comet-1.jpg" alt="">
-													</div>
-													<div class="we-comment">
-														<div class="coment-head">
-															<h5><a href="time-line.html" title="">Donald Trump</a></h5>
-															<span>1 week ago</span>
-															<a class="we-reply" href="#" title="Reply"><i class="fa fa-reply"></i></a>
-														</div>
-														<p>we are working for the dance and sing songs. this video is very awesome for the youngster. please vote this video and like our channel
-															<i class="em em-smiley"></i>
-														</p>
-													</div>
-												</li>
-												<li>
-													<a href="#" title="" class="showmore underline">more comments</a>
-												</li>
-												<li class="post-comment">
-													<div class="comet-avatar">
-														<img src="../images/resources/comet-1.jpg" alt="">
-													</div>
-													<div class="post-comt-box">
-														<form method="post">
-															<textarea placeholder="Post your comment"></textarea>
-																<button type="submit" style="background: #088dcd; position: relative">Post</button>
-														</form>
-													</div>
-												</li>
-											</ul>
-										</div>
-									</div>
-
-								</div>
 
 								</div>
 							</div><!-- centerl meta -->
@@ -729,19 +500,7 @@
 
 
 </div>
-
-<script>
-	function permissionOn() {
-		document.getElementById("permissionOn").style.display = "none"
-		document.getElementById("permissionOff").style.display = "block"
-	}
-	function permissionOff(){
-		document.getElementById("permissionOn").style.display = "block"
-		document.getElementById("permissionOff").style.display = "none"
-	}
-</script>
-
-	<script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="../js/main.min.js"></script>
+	<script src="../js/main.min.js"></script>
 	<script src="../js/script.js"></script>
 
 	<script src="../js/map-init.js"></script>

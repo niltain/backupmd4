@@ -7,12 +7,12 @@
     <meta name="keywords" content="" />
 	<title>Winku Social Network Toolkit</title>
     <link rel="icon" href="../images/fav.png" type="image/png" sizes="16x16">
-    
     <link rel="stylesheet" href="../../resources/css/main.min.css">
     <link rel="stylesheet" href="../../resources/css/style.css">
     <link rel="stylesheet" href="../../resources/css/color.css">
     <link rel="stylesheet" href="../../resources/css/responsive.css">
-
+	<script src="../ajax/logIn.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 </head>
 <body>
 <!--<div class="se-pre-con"></div>-->
@@ -22,15 +22,15 @@
 			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 				<div class="land-featurearea">
 					<div class="land-meta">
-						<h1>Winku</h1>
+						<h1>Fuckbook</h1>
 						<p>
-							Winku is free to use for as long as you want with two active projects.
+							Fuckbook is free to use for as long as you want with two active projects.
 						</p>
 						<div class="friend-logo">
 							<span><img src="../images/wink.png" alt=""></span>
 						</div>
 
-					</div>	
+					</div>
 				</div>
 			</div>
 			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
@@ -38,16 +38,17 @@
 					<div class="log-reg-area sign">
 						<h2 class="log-title">Login</h2>
 							<p>
-								Don’t use Winku Yet? <a href="#" title="">Take the tour</a> or <a href="#" title="">Join now</a>
+								Don’t use Fuckbook Yet? <a href="#" title="">Take the tour</a> or <a href="#" title="">Join now</a>
 							</p>
 						<form method="post">
-							<div class="form-group">	
-							  <input type="text" id="input" required="required"/>
-							  <label class="control-label" for="input">Username</label><i class="mtrl-select"></i>
+							<div class="form-group">
+							  <input type="text" id="usrName" required="required"/>
+							  <label class="control-label" for="usrName">Username</label><i class="mtrl-select"></i>
 							</div>
-							<div class="form-group">	
-							  <input type="password" required="required"/>
-							  <label class="control-label" for="input">Password</label><i class="mtrl-select"></i>
+							<div class="form-group">
+							  <input id="psw" type="password" required="required"/>
+							  <label class="control-label" for="psw">Password</label><i class="mtrl-select"></i>
+								<p id="accountFail" style="display: none; color: red; margin: 0">Account isn't correct!</p>
 							</div>
 							<div class="checkbox">
 							  <label>
@@ -56,7 +57,7 @@
 							</div>
 							<a href="#" title="" class="forgot-pwd">Forgot Password?</a>
 							<div class="submit-btns">
-								<button class="mtr-btn signin" type="button"><span>Login</span></button>
+								<button class="mtr-btn signin" type="button" onclick="signIn()"><span>Login</span></button>
 								<button class="mtr-btn signup" type="button"><span>Register</span></button>
 							</div>
 						</form>
@@ -67,21 +68,25 @@
 								Don’t use Winku Yet? <a href="#" title="">Take the tour</a> or <a href="#" title="">Join now</a>
 							</p>
 						<form method="post">
-							<div class="form-group">	
-							  <input type="text" required="required"/>
-							  <label class="control-label" for="input">First & Last Name</label><i class="mtrl-select"></i>
+							<div class="form-group">
+							  <input id="fullName" type="text" required="required"/>
+							  <label class="control-label" for="fullName">First & Last Name</label><i class="mtrl-select"></i>
 							</div>
-							<div class="form-group">	
-							  <input type="text" required="required"/>
-							  <label class="control-label" for="input">User Name</label><i class="mtrl-select"></i>
+							<div class="form-group">
+							  <input id="userName" type="text" required="required"/>
+							  <label class="control-label" for="userName">User Name</label><i class="mtrl-select"></i>
+								<p id="userNameFail" style="display: none; color: red; margin: 0">Username already exists!</p>
 							</div>
-							<div class="form-group">	
-							  <input type="password" required="required"/>
-							  <label class="control-label" for="input">Password</label><i class="mtrl-select"></i>
-							</div><div class="form-group">
-							  <input type="password" required="required"/>
-							  <label class="control-label" for="input">Re-Type Password</label><i class="mtrl-select"></i>
-							</div>
+							<div class="form-group">
+							  <input id="pass" type="password" required="required"/>
+							  <label class="control-label" for="pass">Password</label><i class="mtrl-select"></i>
+                                <p id="passFail" style="display: none; color: red; margin: 0">Password isn't correct!</p>
+                            </div>
+							<div class="form-group">
+								<input id="rePass" type="password" required="required"/>
+								<label class="control-label" for="psw">Re-Type Password</label><i class="mtrl-select"></i>
+                                <p id="rePassFail" style="display: none; color: red; margin: 0">Password doesn't match!</p>
+                            </div>
 <!--							<div class="form-radio">-->
 <!--							  <div class="radio">-->
 <!--								<label>-->
@@ -94,10 +99,11 @@
 <!--								</label>-->
 <!--							  </div>-->
 <!--							</div>-->
-<!--							<div class="form-group">	-->
-<!--							  <input type="text" required="required"/>-->
-<!--							  <label class="control-label" for="input"><a href="https://wpkixx.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6c29010d05002c">[email&#160;protected]</a></label><i class="mtrl-select"></i>-->
-<!--							</div>-->
+							<div class="form-group">
+							  <input id="email" type="text" required="required"/>
+							  <label class="control-label" for="email"><a href="https://wpkixx.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6c29010d05002c">[email&#160;protected]</a></label><i class="mtrl-select"></i>
+                                <p id="emailFail" style="display: none; color: red; margin: 0">Email isn't correct!</p>
+                            </div>
 							<div class="checkbox">
 							  <label>
 								<input type="checkbox" checked="checked"/><i class="check-box"></i>Accept Terms & Conditions ?
@@ -105,7 +111,7 @@
 							</div>
 							<a href="#" title="" class="already-have">Already have an account</a>
 							<div class="submit-btns">
-								<button class="mtr-btn signup" type="button"><span>Register</span></button>
+								<button class="mtr-btn signup" type="button" onclick="signUp()"><span>Register</span></button>
 							</div>
 						</form>
 					</div>
@@ -114,10 +120,11 @@
 		</div>
 	</div>
 </div>
-	
-	<script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="../js/main.min.js"></script>
+
+<!--	<script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>-->
+    <script src="../js/main.min.js"></script>
 	<script src="../js/script.js"></script>
 
-</body>	
+</body>
 
 </html>
